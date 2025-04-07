@@ -1,0 +1,45 @@
+﻿@page "/subjectsForm"
+@inject ApiHandlerService ApiHandlerService
+
+<h3>Add New Subject</h3>
+
+<EditForm Model="@subject" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label>Name:</label>
+        <InputText @bind-Value="subject.Name" class="form-control" />
+    </div>
+
+    <button class="btn btn-primary" type="submit">Add Subject</button>
+</EditForm>
+
+@if (ApiHandlerService.Subjects.Any())
+{
+        <h4>Existing Subjects</h4>
+        <ul>
+        @foreach (var s in ApiHandlerService.Subjects)
+        {
+                    <li>@s.Name </li>
+        }
+        </ul>
+}
+
+@code {
+    private Subject subject = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ApiHandlerService.LoadDatabaseDetailsThroughAPICall();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await ApiHandlerService.AddSubject(subject);
+
+        subject = new();
+    }
+}
+
+Delete
